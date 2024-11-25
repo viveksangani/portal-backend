@@ -1,0 +1,32 @@
+version: 1.0
+runtime: nodejs18
+build:
+  commands:
+    pre-build:
+      - cd backend
+      - npm ci
+    build:
+      - npm install
+    post-build:
+      - echo "Build completed"
+run:
+  command: node server.js
+  network:
+    port: 5000
+  env:
+    - name: NODE_ENV
+      value: production
+    - name: MONGODB_URI
+      value: mongodb+srv://Anubhav:6IrOHiUXP0OpfKaV@database.1xojp.mongodb.net/test?retryWrites=true&w=majority&appName=Database
+    - name: JWT_SECRET
+      value: a5c5c208488a6b2b40f36f74a3b7057d050890d5d47b4dcd78953982cc9780052a8ec4fc
+    - name: EMAIL_USER
+      value: noreply@swarupai.com
+    - name: EMAIL_PASS
+      value: Vivek@245
+    - name: SMTP_HOST
+      value: smtp.hostinger.com
+    - name: SMTP_PORTcd 
+      value: "465"
+    - name: CORS_ORIGIN
+      value: https://portal.swaroop.ai
