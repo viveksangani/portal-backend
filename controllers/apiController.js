@@ -27,12 +27,11 @@ const createApiUsageTransaction = async (userId, apiName, creditCost, currentCre
     await transaction.save();
   } catch (error) {
     console.error('Error creating API usage transaction:', error);
-    // Don't throw error to prevent API failure
   }
 };
 
 // Welcome API endpoint
-exports.welcomeApi = async (req, res) => {
+const welcomeApi = async (req, res) => {
   const startTime = Date.now();
   const apiName = 'swaroop-welcome';
   
@@ -117,7 +116,7 @@ exports.welcomeApi = async (req, res) => {
 };
 
 // Get API usage analytics
-exports.getApiAnalytics = async (req, res) => {
+const getApiAnalytics = async (req, res) => {
   try {
     const userId = req.user._id;
 
@@ -152,8 +151,8 @@ exports.getApiAnalytics = async (req, res) => {
   }
 };
 
-// Add this new endpoint
-exports.getApiStats = async (req, res) => {
+// Get API stats
+const getApiStats = async (req, res) => {
   try {
     const { apiId } = req.params;
     const userId = req.user._id;
@@ -204,12 +203,12 @@ exports.getApiStats = async (req, res) => {
 };
 
 // Get API documentation
-exports.getDocumentation = (req, res) => {
+const getDocumentation = (req, res) => {
   res.json(documentation);
 };
 
 // Get specific API documentation
-exports.getApiDocumentation = (req, res) => {
+const getApiDocumentation = (req, res) => {
   const { category, apiName } = req.params;
   const api = documentation.apis[apiName];
   
@@ -226,9 +225,11 @@ exports.getApiDocumentation = (req, res) => {
   });
 };
 
-// Export your controller functions
+// Export all functions
 module.exports = {
+  welcomeApi,
+  getApiAnalytics,
+  getApiStats,
   getDocumentation,
-  getApiDocumentation,
-  // other exports...
+  getApiDocumentation
 }; 
