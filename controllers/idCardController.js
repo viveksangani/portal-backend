@@ -3,10 +3,36 @@ const FormData = require('form-data');
 const User = require('../models/User');
 const ApiLog = require('../models/ApiLog');
 const Transaction = require('../models/Transaction');
-const { getApiDocumentation } = require('../../api2/src/data/documentation');
+const documentation = require('../data/documentation');
 const mongoose = require('mongoose');
 
 const CLOUD_RUN_URL = 'https://document-verification-895906245277.us-central1.run.app';
+
+// Define active APIs
+const ACTIVE_APIS = {
+  'document-identification': true,
+  'pan-signature-extraction': true
+};
+
+// Add this function to create transaction records for API usage
+const createApiUsageTransaction = async (userId, apiName, creditCost, currentCredits) => {
+  try {
+    const transaction = new Transaction({
+      userId,
+      type: 'DEBIT',
+      amount: creditCost,
+      description: `API Usage: ${apiName}`,
+      balance: currentCredits,
+      source: 'API_USAGE',
+      metadata: {
+        apiName
+      }
+    });
+    await transaction.save();
+  } catch (error) {
+    console.error('Error creating API usage transaction:', error);
+  }
+};
 
 // Helper function to create transaction record with retry logic
 const createTransactionWithRetry = async (userId, apiName, creditCost, currentCredits, maxRetries = 3) => {
@@ -69,7 +95,7 @@ exports.documentIdentification = async (req, res) => {
 
   try {
     const user = await User.findById(req.user._id);
-    const apiDoc = getApiDocumentation('id_card', apiName);
+    const apiDoc = documentation.apis[apiName];
     const creditCost = apiDoc?.pricing?.credits || 2;
 
     if (user.credits < creditCost) {
@@ -141,7 +167,7 @@ exports.panSignatureExtraction = async (req, res) => {
 
   try {
     const user = await User.findById(req.user._id);
-    const apiDoc = getApiDocumentation('id_card', apiName);
+    const apiDoc = documentation.apis[apiName];
     const creditCost = apiDoc?.pricing?.credits || 1;
 
     if (user.credits < creditCost) {

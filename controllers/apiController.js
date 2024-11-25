@@ -40,7 +40,7 @@ const welcomeApi = async (req, res) => {
     const user = await User.findById(req.user._id);
     
     // Get API documentation to check credit cost
-    const apiDoc = documentation[apiName];
+    const apiDoc = documentation.apis[apiName];
     const creditCost = apiDoc?.pricing?.credits || 1;
 
     // Check if user has enough credits
