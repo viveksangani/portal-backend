@@ -28,6 +28,6 @@ run:
     - name: SMTP_PORT
       value: "465"
     - name: CORS_ORIGIN
-      value: https://portal.swaroop.ai
+      value: https://er4c5dmwnt.ap-northeast-1.awsapprunner.com
     - name: WS_PATH
       value: "/ws"

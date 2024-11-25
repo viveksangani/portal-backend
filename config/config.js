@@ -6,7 +6,7 @@ const config = {
     EMAIL_PASS: process.env.EMAIL_PASS,
     SMTP_HOST: process.env.SMTP_HOST,
     SMTP_PORT: process.env.SMTP_PORT,
-    CORS_ORIGIN: 'https://portal.swaroop.ai'
+    CORS_ORIGIN: 'https://er4c5dmwnt.ap-northeast-1.awsapprunner.com'
   },
   development: {
     MONGODB_URI: process.env.MONGODB_URI,
