@@ -17,8 +17,11 @@ const config = require('./config/config');
 const app = express();
 const server = http.createServer(app);
 
-// WebSocket server
-const wss = new WebSocket.Server({ noServer: true });
+// WebSocket server with proper configuration for App Runner
+const wss = new WebSocket.Server({ 
+  noServer: true,
+  path: process.env.WS_PATH || '/ws'  // Use the configured WS_PATH
+});
 
 // Handle WebSocket connections
 wss.on('connection', function connection(ws, request, user) {
@@ -102,9 +105,11 @@ app.get('/debug/routes', (req, res) => {
   res.json(routes);
 });
 
+// Update the server listen to use 0.0.0.0
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
+  console.log(`WebSocket server running on path: ${process.env.WS_PATH || '/ws'}`);
   console.log('Available routes:');
   app._router.stack.forEach((r) => {
     if (r.route && r.route.path) {

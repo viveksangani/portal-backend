@@ -13,6 +13,8 @@ run:
   env:
     - name: NODE_ENV
       value: production
+    - name: PORT
+      value: "5000"
     - name: MONGODB_URI
       value: mongodb+srv://Anubhav:6IrOHiUXP0OpfKaV@database.1xojp.mongodb.net/test?retryWrites=true&w=majority&appName=Database
     - name: JWT_SECRET
@@ -27,3 +29,5 @@ run:
       value: "465"
     - name: CORS_ORIGIN
       value: https://portal.swaroop.ai
+    - name: WS_PATH
+      value: "/ws"
