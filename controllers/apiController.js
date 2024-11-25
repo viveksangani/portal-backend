@@ -1,14 +1,14 @@
 const User = require('../models/User');
 const ApiLog = require('../models/ApiLog');
-const { getApiDocumentation } = require('../../api2/src/data/documentation');
+const documentation = require('../data/documentation');
 const Transaction = require('../models/Transaction');
 
 // Define active APIs globally
 const ACTIVE_APIS = {
     'swaroop-welcome': true,
     'document-identification': true,
-    'pan-signature-extraction': true  // Add this line
-  };
+    'pan-signature-extraction': true
+};
 
 // Add this function to create transaction records for API usage
 const createApiUsageTransaction = async (userId, apiName, creditCost, currentCredits) => {
@@ -41,7 +41,7 @@ exports.welcomeApi = async (req, res) => {
     const user = await User.findById(req.user._id);
     
     // Get API documentation to check credit cost
-    const apiDoc = getApiDocumentation('trial', apiName);
+    const apiDoc = documentation[apiName];
     const creditCost = apiDoc?.pricing?.credits || 1;
 
     // Check if user has enough credits
@@ -201,4 +201,34 @@ exports.getApiStats = async (req, res) => {
     console.error('Error fetching API stats:', error);
     res.status(500).json({ message: 'Error fetching API statistics' });
   }
+};
+
+// Get API documentation
+exports.getDocumentation = (req, res) => {
+  res.json(documentation);
+};
+
+// Get specific API documentation
+exports.getApiDocumentation = (req, res) => {
+  const { category, apiName } = req.params;
+  const api = documentation.apis[apiName];
+  
+  if (!api) {
+    return res.status(404).json({
+      success: false,
+      message: 'API documentation not found'
+    });
+  }
+
+  res.json({
+    success: true,
+    data: api
+  });
+};
+
+// Export your controller functions
+module.exports = {
+  getDocumentation,
+  getApiDocumentation,
+  // other exports...
 }; 
