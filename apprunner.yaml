@@ -5,6 +5,7 @@ build:
     build:
       - echo "Installing dependencies..."
       - npm install
+      - npm install express-rate-limit --save
       - echo "Build completed"
 run:
   command: node server.js
@@ -28,6 +29,8 @@ run:
     - name: SMTP_PORT
       value: "465"
     - name: CORS_ORIGIN
-      value: https://er4c5dmwnt.ap-northeast-1.awsapprunner.com
+      value: "https://main.d3c6urjiujlay0.amplifyapp.com,https://er4c5dmwnt.ap-northeast-1.awsapprunner.com"
     - name: WS_PATH
       value: "/ws"
+    - name: ALLOWED_ORIGINS
+      value: "https://main.d3c6urjiujlay0.amplifyapp.com,https://er4c5dmwnt.ap-northeast-1.awsapprunner.com"

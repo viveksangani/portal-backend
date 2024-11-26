@@ -13,25 +13,31 @@ const superAdminRoutes = require('./routes/superAdminRoutes');
 const url = require('url');
 const wsService = require('./services/WebSocketService');
 const config = require('./config/config');
-const rateLimit = require('express-rate-limit');
 
 const app = express();
 const server = http.createServer(app);
+
+// Rate limiting setup
+let limiter;
+try {
+    const rateLimit = require('express-rate-limit');
+    limiter = rateLimit({
+        windowMs: 15 * 60 * 1000, // 15 minutes
+        max: 100, // limit each IP to 100 requests per windowMs
+        message: 'Too many requests from this IP, please try again later.'
+    });
+    // Apply rate limiting to all routes
+    app.use(limiter);
+    console.log('Rate limiting enabled');
+} catch (error) {
+    console.warn('Rate limiting is not enabled:', error.message);
+}
 
 // WebSocket server with proper configuration for App Runner
 const wss = new WebSocket.Server({ 
   noServer: true,
   path: process.env.WS_PATH || '/ws'  // Use the configured WS_PATH
 });
-
-// Add rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
-});
-
-// Apply to all routes
-app.use(limiter);
 
 // Handle WebSocket connections
 wss.on('connection', function connection(ws, request, user) {
