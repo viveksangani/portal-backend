@@ -7,6 +7,7 @@ const config = {
     SMTP_HOST: process.env.SMTP_HOST,
     SMTP_PORT: process.env.SMTP_PORT,
     CORS_ORIGIN: [
+      'https://console.swaroop.ai',
       'https://main.d3c6urjiujlay0.amplifyapp.com',
       'https://er4c5dmwnt.ap-northeast-1.awsapprunner.com'
     ]

@@ -29,8 +29,8 @@ run:
     - name: SMTP_PORT
       value: "465"
     - name: CORS_ORIGIN
-      value: "https://main.d3c6urjiujlay0.amplifyapp.com,https://er4c5dmwnt.ap-northeast-1.awsapprunner.com"
+      value: "https://console.swaroop.ai,https://main.d3c6urjiujlay0.amplifyapp.com,https://er4c5dmwnt.ap-northeast-1.awsapprunner.com"
     - name: WS_PATH
       value: "/ws"
     - name: ALLOWED_ORIGINS
-      value: "https://main.d3c6urjiujlay0.amplifyapp.com,https://er4c5dmwnt.ap-northeast-1.awsapprunner.com"
+      value: "https://console.swaroop.ai,https://main.d3c6urjiujlay0.amplifyapp.com,https://er4c5dmwnt.ap-northeast-1.awsapprunner.com"
