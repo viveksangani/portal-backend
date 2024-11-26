@@ -9,7 +9,8 @@ const config = {
     CORS_ORIGIN: [
       'https://console.swaroop.ai',
       'https://main.d3c6urjiujlay0.amplifyapp.com',
-      'https://er4c5dmwnt.ap-northeast-1.awsapprunner.com'
+      'https://er4c5dmwnt.ap-northeast-1.awsapprunner.com',
+      'http://localhost:3000'
     ]
   },
   development: {
@@ -23,4 +24,14 @@ const config = {
   }
 };
 
-module.exports = config[process.env.NODE_ENV || 'development']; 
+const processConfig = (env) => {
+  const currentConfig = config[env || 'development'];
+  return {
+    ...currentConfig,
+    CORS_ORIGIN: Array.isArray(currentConfig.CORS_ORIGIN) 
+      ? currentConfig.CORS_ORIGIN 
+      : [currentConfig.CORS_ORIGIN]
+  };
+};
+
+module.exports = processConfig(process.env.NODE_ENV); 

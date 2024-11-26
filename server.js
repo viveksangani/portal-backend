@@ -17,6 +17,36 @@ const config = require('./config/config');
 const app = express();
 const server = http.createServer(app);
 
+// Move CORS configuration before any routes
+const corsOptions = {
+    origin: function (origin, callback) {
+        const allowedOrigins = Array.isArray(config.CORS_ORIGIN) 
+            ? config.CORS_ORIGIN 
+            : [config.CORS_ORIGIN];
+        
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        
+        if (allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            console.log('Rejected Origin:', origin);
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    preflightContinue: false,
+    optionsSuccessStatus: 204
+};
+
+// Apply CORS middleware before other middlewares
+app.use(cors(corsOptions));
+
+// Enable pre-flight requests for all routes
+app.options('*', cors(corsOptions));
+
 // Rate limiting setup
 let limiter;
 try {
@@ -97,16 +127,6 @@ server.on('upgrade', function upgrade(request, socket, head) {
 // Connect to MongoDB
 connectDB();
 
-// CORS configuration
-app.use(cors({
-  origin: Array.isArray(config.CORS_ORIGIN) 
-    ? config.CORS_ORIGIN 
-    : [config.CORS_ORIGIN],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -129,6 +149,15 @@ app.get('/debug/routes', (req, res) => {
     }
   });
   res.json(routes);
+});
+
+// Add this after your routes
+app.get('/api/debug/cors', (req, res) => {
+    res.json({
+        origin: req.headers.origin,
+        allowedOrigins: config.CORS_ORIGIN,
+        headers: req.headers
+    });
 });
 
 // Update the server listen to use 0.0.0.0
