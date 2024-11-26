@@ -34,3 +34,5 @@ run:
       value: "/ws"
     - name: ALLOWED_ORIGINS
       value: "https://console.swaroop.ai,https://main.d3c6urjiujlay0.amplifyapp.com,https://er4c5dmwnt.ap-northeast-1.awsapprunner.com,http://localhost:3000"
+    - name: WS_ALLOWED_ORIGINS
+      value: "https://console.swaroop.ai,https://main.d3c6urjiujlay0.amplifyapp.com,https://er4c5dmwnt.ap-northeast-1.awsapprunner.com,http://localhost:3000"

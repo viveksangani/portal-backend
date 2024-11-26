@@ -35,10 +35,11 @@ const corsOptions = {
         }
     },
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     preflightContinue: false,
-    optionsSuccessStatus: 204
+    optionsSuccessStatus: 204,
+    exposedHeaders: ['Content-Length', 'X-Requested-With']
 };
 
 // Apply CORS middleware before other middlewares
@@ -66,7 +67,20 @@ try {
 // WebSocket server with proper configuration for App Runner
 const wss = new WebSocket.Server({ 
   noServer: true,
-  path: process.env.WS_PATH || '/ws'  // Use the configured WS_PATH
+  path: process.env.WS_PATH || '/ws',
+  verifyClient: (info, callback) => {
+    const origin = info.origin;
+    const allowedOrigins = Array.isArray(config.CORS_ORIGIN) 
+      ? config.CORS_ORIGIN 
+      : [config.CORS_ORIGIN];
+    
+    if (allowedOrigins.includes(origin)) {
+      callback(true);
+    } else {
+      console.log('Rejected WebSocket connection from:', origin);
+      callback(false, 403, 'Forbidden');
+    }
+  }
 });
 
 // Handle WebSocket connections
@@ -111,7 +125,6 @@ server.on('upgrade', function upgrade(request, socket, head) {
     return;
   }
 
-  // Verify JWT token
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     wss.handleUpgrade(request, socket, head, function done(ws) {
