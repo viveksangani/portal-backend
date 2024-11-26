@@ -6,7 +6,10 @@ const config = {
     EMAIL_PASS: process.env.EMAIL_PASS,
     SMTP_HOST: process.env.SMTP_HOST,
     SMTP_PORT: process.env.SMTP_PORT,
-    CORS_ORIGIN: 'https://er4c5dmwnt.ap-northeast-1.awsapprunner.com'
+    CORS_ORIGIN: [
+      'https://main.d3c6urjiujlay0.amplifyapp.com',
+      'https://er4c5dmwnt.ap-northeast-1.awsapprunner.com'
+    ]
   },
   development: {
     MONGODB_URI: process.env.MONGODB_URI,
@@ -15,7 +18,7 @@ const config = {
     EMAIL_PASS: process.env.EMAIL_PASS,
     SMTP_HOST: process.env.SMTP_HOST,
     SMTP_PORT: process.env.SMTP_PORT,
-    CORS_ORIGIN: 'http://localhost:3000'
+    CORS_ORIGIN: ['http://localhost:3000']
   }
 };
 

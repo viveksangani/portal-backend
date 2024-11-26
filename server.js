@@ -13,6 +13,7 @@ const superAdminRoutes = require('./routes/superAdminRoutes');
 const url = require('url');
 const wsService = require('./services/WebSocketService');
 const config = require('./config/config');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 const server = http.createServer(app);
@@ -23,12 +24,29 @@ const wss = new WebSocket.Server({
   path: process.env.WS_PATH || '/ws'  // Use the configured WS_PATH
 });
 
+// Add rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // limit each IP to 100 requests per windowMs
+});
+
+// Apply to all routes
+app.use(limiter);
+
 // Handle WebSocket connections
 wss.on('connection', function connection(ws, request, user) {
-  console.log(`User ${user.username} connected to WebSocket`);
-  
-  if (user.id) {
-    wsService.addConnection(user.id, ws);
+  const origin = request.headers.origin;
+  if (Array.isArray(config.CORS_ORIGIN) 
+      ? config.CORS_ORIGIN.includes(origin)
+      : config.CORS_ORIGIN === origin) {
+    console.log(`User ${user.username} connected to WebSocket`);
+    if (user.id) {
+      wsService.addConnection(user.id, ws);
+    }
+  } else {
+    console.log(`Rejected WebSocket connection from origin: ${origin}`);
+    ws.close();
+    return;
   }
 
   ws.on('message', function incoming(message) {
@@ -75,7 +93,9 @@ connectDB();
 
 // CORS configuration
 app.use(cors({
-  origin: config.CORS_ORIGIN,
+  origin: Array.isArray(config.CORS_ORIGIN) 
+    ? config.CORS_ORIGIN 
+    : [config.CORS_ORIGIN],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
