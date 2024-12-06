@@ -6,7 +6,7 @@ const Transaction = require('../models/Transaction');
 const documentation = require('../data/documentation');
 const mongoose = require('mongoose');
 
-const CLOUD_RUN_URL = 'https://document-verification-895906245277.us-central1.run.app';
+const CLOUD_RUN_URL = 'https://document-verification-895906245277.asia-south1.run.app/';
 
 // Define active APIs
 const ACTIVE_APIS = {
